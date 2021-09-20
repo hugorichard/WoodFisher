@@ -262,10 +262,10 @@ def load_checkpoint(full_checkpoint_path: str, current_model_config=None, config
     """
     try:
 
-        if 'str' in full_checkpoint_path.lower():
+        if torch.cuda.is_available():
             checkpoint_dict = torch.load(full_checkpoint_path, map_location='cuda:0')
         else:
-            checkpoint_dict = torch.load(full_checkpoint_path)
+            checkpoint_dict=torch.load(full_checkpoint_path, map_location=torch.device('cpu'))
     except:
         raise IOError(errno.ENOENT, 'Checkpoint file does not exist at', os.path.abspath(full_checkpoint_path))
 
