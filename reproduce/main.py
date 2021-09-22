@@ -60,7 +60,7 @@ def inverse_fisher(data, model, criterion, init_lambda=1):
 def update(data, model, criterion, init_lambda=1, target_sparsity=0.5):
     all_params = flatten_tensor_list(model.parameters(), return_shapes=True)
     inv_F = inverse_fisher(data, model, criterion, init_lambda)
-    statistics = all_params / (2 * np.diag(inv_F))
+    statistics = all_params ** 2 / (2 * np.diag(inv_F))
     index = np.argsort(statistics)
     to_mask_params = index[: int(len(index) * target_sparsity)]
     all_params = all_params - np.sum(inv_F * statistics, axis=0)
@@ -76,6 +76,7 @@ def update(data, model, criterion, init_lambda=1, target_sparsity=0.5):
                     ]
                 ).view_as(params)
             )
+            current_index = current_index + np.prod(params.shape)
     return model
 
 
